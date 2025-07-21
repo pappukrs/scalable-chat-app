@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO Test</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  </head>
+  <body>
+    <h1>Socket.IO Chat Client</h1>
+    <div>
+      <input id="messageInput" placeholder="Type a message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+    <ul id="messages"></ul>
+
+    <script>
+      const socket = io("http://localhost:4000", {
+        auth: {
+          token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicGhvbmUiOiI4ODA5NTAxNTE3IiwiaWF0IjoxNzUzMDk4NzE5LCJleHAiOjE3NTMxMDIzMTl9.w5pEU3BzCQm5XvM6z9Nmm9gE3HpY7_GFZTkOs-2j7Vg"
+        }
+      });
+
+      socket.on("connect", () => {
+        console.log("✅ Connected to server");
+        socket.emit("joinRoom", "general");
+      });
+
+      socket.on("newMessage", (data) => {
+        console.log("📩 New message:", data);
+        const li = document.createElement("li");
+        li.textContent = `${data.sender}: ${data.message}`;
+        document.getElementById("messages").appendChild(li);
+      });
+
+      socket.on("connect_error", (err) => {
+        console.error("❌ Connection error:", err.message);
+      });
+
+      function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const message = input.value.trim();
+        if (message) {
+          socket.emit("sendMessage", {
+            room: "general",
+            message: message,
+          });
+          input.value = "";
+        }
+      }
+    </script>
+  </body>
+</html>
