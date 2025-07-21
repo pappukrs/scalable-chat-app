@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package chat;
+
+// The gRPC service definition
+service ChatService {
+  // Get chat history for a room
+  rpc GetChatHistory (ChatHistoryRequest) returns (ChatHistoryResponse);
+}
+
+// Request message
+message ChatHistoryRequest {
+  string room = 1;         // Name of the chat room
+  int32 limit = 2;         // Number of messages to fetch
+}
+
+// Response message
+message ChatMessage {
+  string sender = 1;       // Who sent the message
+  string message = 2;      // The message text
+  string timestamp = 3;    // Timestamp of the message
+}
+
+message ChatHistoryResponse {
+  repeated ChatMessage messages = 1; // List of messages
+}
