@@ -7,13 +7,42 @@ const kafka = new Kafka({
 
 const producer = kafka.producer();
 
-const sendMessageToKafka = async (message) => {
-  await producer.connect();
-  await producer.send({
-    topic: 'chat-messages',
-    messages: [{ value: JSON.stringify(message) }],
-  });
-  console.log('📤 Message sent to Kafka:', message);
+// Connect the producer once
+const connectProducer = async () => {
+  try {
+    await producer.connect();
+    console.log('✅ Kafka producer connected');
+  } catch (err) {
+    console.error('❌ Failed to connect Kafka producer:', err.message);
+  }
 };
 
-module.exports = { sendMessageToKafka };
+const sendMessageToKafka = async (message) => {
+  try {
+    await producer.send({
+      topic: 'chat-messages',
+      messages: [{ value: JSON.stringify(message) }],
+    });
+    console.log('📤 Message sent to Kafka:', message);
+  } catch (err) {
+    console.error('❌ Failed to send message to Kafka:', err.message);
+  }
+};
+
+const sendNotificationToKafka = async (notification) => {
+  try {
+    await producer.send({
+      topic: 'notifications',
+      messages: [{ value: JSON.stringify(notification) }],
+    });
+    console.log('📤 Notification sent to Kafka:', notification);
+  } catch (err) {
+    console.error('❌ Failed to send notification to Kafka:', err.message);
+  }
+};
+
+module.exports = {
+  connectProducer,
+  sendMessageToKafka,
+  sendNotificationToKafka,
+};

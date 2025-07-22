@@ -13,6 +13,12 @@ backend/message-store-service/package-lock.json
 
 
 
+backend/notification-service/node_modules
+backend/notification-service/.env
+backend/notification-service/package-lock.json
+
+
+
 
 frontend/
 infra/

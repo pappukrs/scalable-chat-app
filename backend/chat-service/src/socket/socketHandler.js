@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const { createAdapter } = require('@socket.io/redis-adapter');
 const { createClient } = require('redis');
-const { sendMessageToKafka } = require('../services/kafkaProducer');
+const { sendMessageToKafka, sendNotificationToKafka } = require('../services/kafkaProducer');
+const { sendNotification } = require('../controllers/chatController');
 
 const handleSocket = (io) => {
   // Redis setup
@@ -48,6 +49,16 @@ const handleSocket = (io) => {
           message,
           timestamp: new Date().toISOString(),
         });
+
+        await sendNotificationToKafka({
+  userId: socket.user.phone,
+  type: 'chat',
+  message: `New message from ${socket.user.phone}`,
+  timestamp: new Date().toISOString(),
+});
+
+        await sendNotification(socket.user.phone, `New message from ${socket.user.phone}: ${message}`);
+
 
         // Broadcast to others in room
         io.to(room).emit('newMessage', {

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package notification;
+
+// Service definition
+service NotificationService {
+  // Send a notification
+  rpc SendNotification (NotificationRequest) returns (NotificationResponse);
+
+  // Get notifications for a user
+  rpc GetNotifications (UserRequest) returns (NotificationList);
+}
+
+// Message for sending a notification
+message NotificationRequest {
+  string userId = 1;
+  string type = 2;       // e.g., "chat", "system"
+  string message = 3;
+  string timestamp = 4;
+}
+
+// Response after sending
+message NotificationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Request for fetching notifications
+message UserRequest {
+  string userId = 1;
+}
+
+// List of notifications
+message NotificationList {
+  repeated NotificationItem notifications = 1;
+}
+
+// Notification item
+message NotificationItem {
+  string type = 1;
+  string message = 2;
+  string timestamp = 3;
+}

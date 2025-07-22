@@ -5,6 +5,8 @@ const { Server } = require('socket.io');
 const { sequelize } = require('./models/message');
 const handleSocket = require('./socket/socketHandler');
 const chatRoutes = require('./routes/chatRoutes');
+const { connectProducer } = require('./services/kafkaProducer');
+
 
 const app = express();
 const server = http.createServer(app);
@@ -30,6 +32,8 @@ const PORT = process.env.PORT || 4000;
 server.listen(PORT, async () => {
   try {
     await sequelize.authenticate();
+    await connectProducer(); // Connect Kafka producer
+    await sequelize.sync(); // Ensure database tables are created
     console.log('✅ Database connected');
     console.log(`🚀 Chat service running on http://localhost:${PORT}`);
   } catch (err) {
